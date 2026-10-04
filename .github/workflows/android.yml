@@ -28,7 +28,7 @@ jobs:
           arch: x86_64
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
-          script: PLATFORM=android npx codeceptjs run --config test/integration/codecept.conf.js --steps
+          script: mkdir -p output && adb logcat -c && DEBUG='mw:*' PLATFORM=android npx codeceptjs run --config test/integration/codecept.conf.js --steps || (adb logcat -d > output/logcat.txt; adb shell pm list packages > output/packages.txt; adb shell dumpsys activity activities > output/activities.txt; exit 1)
       - uses: actions/upload-artifact@v4
         if: always()
         with:

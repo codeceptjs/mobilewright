@@ -23,8 +23,10 @@ jobs:
           xcrun simctl boot "$UDID"
           xcrun simctl bootstatus "$UDID" -b
           echo "DEVICE_ID=$UDID" >> "$GITHUB_ENV"
+      - name: Install mobilecli agent
+        run: npx mobilecli agent install --device "$DEVICE_ID"
       - name: Run acceptance tests on simulator
-        run: PLATFORM=ios npx codeceptjs run --config test/integration/codecept.conf.js --steps
+        run: DEBUG='mw:*' PLATFORM=ios npx codeceptjs run --config test/integration/codecept.conf.js --steps
       - uses: actions/upload-artifact@v4
         if: always()
         with:
