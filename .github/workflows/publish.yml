@@ -1,0 +1,36 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm install -g npm@latest
+      - run: npm test
+      - name: Set package version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          npm version "${TAG#v}" --no-git-tag-version
+      - name: Publish to npm
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          if [ "${{ github.event.release.prerelease }}" = "true" ] || echo "$TAG" | grep -qE 'rc|beta'; then
+            npm publish --provenance --access public --tag beta
+          else
+            npm publish --provenance --access public
+          fi

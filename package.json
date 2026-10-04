@@ -1,0 +1,49 @@
+{
+  "name": "@codeceptjs/mobilewright",
+  "version": "0.1.0",
+  "description": "Mobilewright helper for CodeceptJS: test iOS and Android apps without an Appium server",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "lib"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "test": "mocha test/unit",
+    "test:android": "mocha test/integration/android_test.js --timeout 300000",
+    "test:ios": "mocha test/integration/ios_test.js --timeout 300000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codeceptjs/mobilewright.git"
+  },
+  "keywords": [
+    "codeceptjs",
+    "mobilewright",
+    "mobile",
+    "ios",
+    "android",
+    "testing"
+  ],
+  "author": "DavertMik",
+  "license": "MIT",
+  "dependencies": {
+    "@codeceptjs/helper": "^2.0.4",
+    "@mobilewright/core": "0.0.63",
+    "mobilewright": "0.0.63"
+  },
+  "peerDependencies": {
+    "codeceptjs": "^4.0.0"
+  },
+  "devDependencies": {
+    "chai": "6.3.0",
+    "codeceptjs": "4.2.0",
+    "mocha": "12.0.3"
+  }
+}
