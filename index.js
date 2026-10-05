@@ -2,7 +2,7 @@ import './lib/env.js'
 import fs from 'node:fs'
 import path from 'node:path'
 import Helper from '@codeceptjs/helper'
-import { ios, android, terminateAppIfRunning } from 'mobilewright'
+import { ios, android } from 'mobilewright'
 import { LocatorError, sleep } from '@mobilewright/core'
 import recorder from 'codeceptjs/lib/recorder'
 import { truth } from 'codeceptjs/lib/assert/truth'
@@ -88,7 +88,7 @@ class Mobilewright extends Helper {
     const { app, restart } = this.options
     if (!app || !restart) return
     if (restart === 'session' && this._appLaunched) return
-    await terminateAppIfRunning(this.device, app)
+    await this.device.terminateApp(app).catch(err => this.debug(`App ${app} was not terminated: ${err.message}`))
     await this.device.launchApp(app)
     this._appLaunched = true
   }
@@ -610,14 +610,20 @@ class Mobilewright extends Helper {
    */
   async scrollIntoView(locator, maxSwipes = 10) {
     const found = await this._find(locator, { visible: false })
-    const strategy = toStrategies(locator, { platform: this.platform }).find(s => s.by !== 'labelNear')
-    const target = found ? found.locator : build(this.screen.root, strategy)
+    const target = found ? found.locator : this._anyOf(locator)
     try {
       await target.scrollIntoViewIfNeeded({ maxSwipes })
     } catch (err) {
       if (err instanceof LocatorError) throw new Error(`Element "${stringify(locator)}" was not scrolled into view after ${maxSwipes} swipes`)
       throw err
     }
+  }
+
+  _anyOf(locator) {
+    return toStrategies(locator, { platform: this.platform })
+      .filter(s => s.by !== 'labelNear')
+      .map(s => build(this.screen.root, s))
+      .reduce((all, loc) => all.or(loc))
   }
 
   /**
@@ -701,7 +707,7 @@ class Mobilewright extends Helper {
    * @param {string} [appId]
    */
   async closeApp(appId = this.options.app) {
-    await terminateAppIfRunning(this.device, appId)
+    await this.device.terminateApp(appId)
   }
 
   /**

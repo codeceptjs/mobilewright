@@ -18,21 +18,25 @@ Scenario('shows the catalog', ({ I }) => {
 })
 
 Scenario('logs in by the labels next to the fields', ({ I }) => {
+  I.waitForText('Products', 30)
   I.amOnPage('mydemoapprn://login')
-  I.waitForElement('~Username input field', 30)
+  I.waitForElement('~Username input field', 15)
   I.fillField('Username', 'bob@example.com')
   I.fillField('Password', secret('10203040'))
   I.seeInField('~Username input field', 'bob@example.com')
+  I.scrollIntoView('~Login button')
   I.click('~Login button')
   I.waitForText('Products', 15)
 })
 
 Scenario('shows a login error', ({ I }) => {
+  I.waitForText('Products', 30)
   I.amOnPage('mydemoapprn://login')
-  I.waitForElement('~Username input field', 30)
+  I.waitForElement('~Username input field', 15)
   I.fillField('Username', 'alice@example.com')
   I.appendField('Username', '')
   I.fillField('Password', '10203040')
+  I.scrollIntoView('~Login button')
   I.click('~Login button')
   I.waitForText('Sorry, this user has been locked out.', 15)
 })

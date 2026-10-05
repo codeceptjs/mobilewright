@@ -187,6 +187,22 @@ describe('Mobilewright helper', () => {
       expect(driver.calls.filter(c => c[0] === 'terminateApp')).to.have.length(2)
     })
 
+    it('launches the app even when terminate fails', async () => {
+      const { I, driver } = await start([])
+      driver.terminateApp = async () => {
+        throw new Error('exit status 3')
+      }
+      await I._before()
+      expect(driver.calls.filter(c => c[0] === 'launchApp')).to.have.length(1)
+    })
+
+    it('scrolls to an element that is only known by its label', async () => {
+      const button = node({ type: 'Button', label: 'Login button', bounds: box(10, 300, 100, 40) })
+      const { I, driver } = await start(() => (driver.calls.some(c => c[0] === 'swipe') ? [button] : []))
+      await I.scrollIntoView('~Login button')
+      await I.seeElement('~Login button')
+    })
+
     it('launches the app once with restart: session', async () => {
       const { I, driver } = await start([], { restart: 'session' })
       await I._before()

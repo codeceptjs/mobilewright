@@ -28,6 +28,7 @@ jobs:
           api-level: 33
           target: google_apis
           arch: x86_64
+          profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
           script: mkdir -p output && adb logcat -c && DEBUG='mw:*' PLATFORM=android npx codeceptjs run --config test/integration/codecept.conf.js --steps || (adb logcat -d > output/logcat.txt; adb shell pm list packages > output/packages.txt; adb shell dumpsys activity activities > output/activities.txt; exit 1)
