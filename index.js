@@ -712,6 +712,7 @@ class Mobilewright extends Helper {
 
   /**
    * Opens a URL or deep link on the device.
+   * On iOS, the "Open in ...?" confirmation shown for app links is accepted automatically.
    *
    * ```js
    * I.amOnPage('myapp://settings');
@@ -721,6 +722,9 @@ class Mobilewright extends Helper {
    */
   async amOnPage(url) {
     await this.device.openUrl(url)
+    if (this.platform !== 'ios' || /^https?:/i.test(url)) return
+    const found = await this._find({ role: 'button', name: 'Open' }, { context: { type: 'Alert' }, timeout: 3000 })
+    if (found) await found.locator.tap()
   }
 
   /**
@@ -729,7 +733,7 @@ class Mobilewright extends Helper {
    * @param {string} url
    */
   async openUrl(url) {
-    await this.device.openUrl(url)
+    return this.amOnPage(url)
   }
 
   /**

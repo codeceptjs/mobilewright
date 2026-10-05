@@ -240,6 +240,13 @@ describe('Mobilewright helper', () => {
       expect(driver.calls.map(c => c[0])).to.include.members(['installApp', 'uninstallApp', 'openUrl'])
     })
 
+    it('accepts the iOS deep link confirmation', async () => {
+      const alert = node({ type: 'Alert', label: 'Open in “Demo”?', bounds: box(60, 400, 270, 100), children: [node({ type: 'Button', label: 'Open', bounds: box(200, 460, 130, 40) })] })
+      const { I, driver } = await start([alert], { platform: 'ios' })
+      await I.amOnPage('demo://login')
+      expect(driver.calls.filter(c => c[0] === 'tap').at(-1)).to.deep.equal(['tap', 265, 480])
+    })
+
     it('handles orientation and buttons', async () => {
       const { I, driver } = await start([])
       await I.setOrientation('LANDSCAPE')
