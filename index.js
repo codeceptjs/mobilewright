@@ -296,7 +296,10 @@ class Mobilewright extends Helper {
    * @param {string|object} value
    */
   async fillField(field, value) {
-    await this._act(field, (loc, timeout) => loc.fill(value.toString(), { timeout }), { purpose: 'field' })
+    await this._act(field, async (loc, timeout) => {
+      await this._clear(loc, timeout)
+      await this.driver.typeText(value.toString())
+    }, { purpose: 'field' })
   }
 
   /**
@@ -306,7 +309,11 @@ class Mobilewright extends Helper {
    * @param {string} value
    */
   async appendField(field, value) {
-    await this._act(field, (loc, timeout, found) => loc.fill(nodeValue(found.node) + value.toString(), { timeout }), { purpose: 'field' })
+    await this._act(field, async (loc, timeout, found) => {
+      const text = nodeValue(found.node) + value.toString()
+      await this._clear(loc, timeout)
+      await this.driver.typeText(text)
+    }, { purpose: 'field' })
   }
 
   /**
@@ -315,7 +322,18 @@ class Mobilewright extends Helper {
    * @param {string|object} field
    */
   async clearField(field) {
-    await this._act(field, (loc, timeout) => loc.clear({ timeout }), { purpose: 'field' })
+    await this._act(field, (loc, timeout) => this._clear(loc, timeout), { purpose: 'field' })
+  }
+
+  async _clear(loc, timeout) {
+    try {
+      await loc.clear({ timeout })
+    } catch (err) {
+      if (!(err instanceof LocatorError) || !err.message.includes('Failed to clear')) throw err
+      const length = (await loc.getValue({ timeout: 0 })).length
+      await this.driver.pressKeys(['end', ...Array(length).fill('backspace')])
+      if (await loc.getValue({ timeout: 0 })) throw err
+    }
   }
 
   /**

@@ -20,5 +20,8 @@ export const config = {
       animations: 'off',
     },
   },
+  plugins: {
+    screenshot: { enabled: true },
+  },
   name: 'mobilewright-integration',
 }

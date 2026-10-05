@@ -82,6 +82,20 @@ describe('Mobilewright helper', () => {
       expect(await I.grabValueFrom('Email')).to.equal('user@example.com')
     })
 
+    it('clears with backspaces when select-all does not work', async () => {
+      const { I, driver } = await start(registrationForm())
+      await I.fillField('Email', 'alice@example.com')
+      driver.clearText = async () => {}
+      driver.pressKeys = async keys => {
+        driver.calls.push(['pressKeys', keys.length])
+        const backspaces = keys.filter(k => k === 'backspace').length
+        driver.focused.value = driver.focused.value.slice(0, -backspaces)
+      }
+      await I.fillField('Email', 'bob@example.com')
+      expect(field(driver, 'io.app:id/email').value).to.equal('bob@example.com')
+      expect(driver.calls).to.deep.include(['pressKeys', 18])
+    })
+
     it('fails with the locator in the message', async () => {
       const { I } = await start(registrationForm())
       let error
