@@ -194,6 +194,19 @@ describe('Mobilewright helper', () => {
       expect(driver.calls.filter(c => c[0] === 'launchApp')).to.have.length(1)
     })
 
+    it('installs apps after connecting and disconnects when install fails', async () => {
+      const driver = fakeDriver([])
+      driver.installApp = async () => {
+        throw new Error('bad app')
+      }
+      const I = new Mobilewright({ platform: 'android', driver, installApps: ['/tmp/a.apk'] })
+      let error
+      await I._beforeSuite().catch(e => (error = e))
+      expect(error.message).to.equal('bad app')
+      expect(driver.calls.at(-1)).to.deep.equal(['disconnect'])
+      expect(I.device).to.equal(null)
+    })
+
     it('disconnects at the end', async () => {
       const { I, driver } = await start([])
       await I._finishTest()

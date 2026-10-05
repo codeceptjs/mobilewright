@@ -15,8 +15,8 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
-      - name: Unpack test app
-        run: unzip -q test/data/TestApp-iphonesimulator.zip -d test/data -x '__MACOSX/*'
+      - name: Download demo app
+        run: curl -fsSL -o test/data/MyRNDemoApp.zip https://github.com/saucelabs/my-demo-app-rn/releases/download/v1.3.0/iOS-Simulator-MyRNDemoApp.1.3.0-162.zip
       - name: Boot simulator
         run: |
           UDID=$(xcrun simctl list devices available -j | node -e 'const d=JSON.parse(require("fs").readFileSync(0)).devices;const all=Object.entries(d).filter(([r])=>r.includes("iOS")).flatMap(([,v])=>v);console.log(all.find(x=>x.name.startsWith("iPhone")).udid)')

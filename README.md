@@ -111,7 +111,7 @@ The mobilewright library sends no telemetry; only its own CLI does. The helper s
 npm test
 ```
 
-Unit tests run against a fake driver, with no device. Acceptance tests for Android and iOS run in GitHub Actions, using the sample apps from `test/data`.
+Unit tests run against a fake driver, with no device. Acceptance tests for Android and iOS run in GitHub Actions, using Sauce Labs [My Demo App](https://github.com/saucelabs/my-demo-app-rn), downloaded during the run.
 
 ## License
 

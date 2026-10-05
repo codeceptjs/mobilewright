@@ -111,8 +111,6 @@ class Mobilewright extends Helper {
       url,
       autoStart: url ? false : undefined,
       driver,
-      installApps: this.options.installApps,
-      bundleId: this.options.app,
       autoAppLaunch: false,
       timeout: this.options.timeout,
       actionTimeout: this.options.actionTimeout,
@@ -122,6 +120,12 @@ class Mobilewright extends Helper {
     })
     this.screen = this.device.screen
     this.driver = this.screen.driver
+    try {
+      for (const app of [this.options.installApps ?? []].flat()) await this.device.installApp(app)
+    } catch (err) {
+      await this._finishTest().catch(() => {})
+      throw err
+    }
   }
 
   async _find(locator, { purpose = 'element', context = null, timeout = 0, visible = true } = {}) {

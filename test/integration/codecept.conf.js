@@ -1,27 +1,18 @@
 import path from 'node:path'
 
 const platform = process.env.PLATFORM || 'android'
-const data = path.resolve(import.meta.dirname, '../data')
-
-const apps = {
-  android: {
-    app: 'io.selendroid.testapp',
-    installApps: path.join(data, 'selendroid-test-app-0.17.0.apk'),
-  },
-  ios: {
-    app: 'io.appium.TestApp',
-    installApps: path.join(data, 'TestApp-iphonesimulator.app'),
-  },
-}
+const apps = path.resolve(import.meta.dirname, '../data')
 
 export const config = {
-  tests: `./${platform}_test.js`,
+  tests: './*_test.js',
   output: path.resolve(import.meta.dirname, '../../output'),
+  noGlobals: true,
   helpers: {
     Mobilewright: {
       require: '../../index.js',
       platform,
-      ...apps[platform],
+      app: 'com.saucelabs.mydemoapp.rn',
+      installApps: path.join(apps, platform === 'ios' ? 'MyRNDemoApp.zip' : 'MyRNDemoApp.apk'),
       deviceId: process.env.DEVICE_ID,
       actionTimeout: 10000,
       waitForTimeout: 10000,
@@ -29,6 +20,5 @@ export const config = {
       animations: 'off',
     },
   },
-  noGlobals: true,
   name: 'mobilewright-integration',
 }
