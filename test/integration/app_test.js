@@ -5,9 +5,11 @@ import { secret } from 'codeceptjs'
 Feature('My Demo App')
 
 After(async ({ I }) => {
+  const name = `after-${Date.now()}`
   const source = await I.grabSource()
   fs.mkdirSync(global.output_dir, { recursive: true })
-  fs.writeFileSync(path.join(global.output_dir, `source-${Date.now()}.json`), source)
+  fs.writeFileSync(path.join(global.output_dir, `${name}.json`), source)
+  await I.saveScreenshot(`${name}.png`)
 })
 
 Scenario('shows the catalog', ({ I }) => {
