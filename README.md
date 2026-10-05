@@ -101,6 +101,11 @@ I.see('Welcome', { role: 'header' })
 
 Appium contexts and web views, settings, network connection, activities, touch actions, file transfer, clipboard, device lock and notification shade.
 
+## Known issues
+
+- **iOS simulator setup.** Install mobilecli's agent once per simulator with `npx mobilecli agent install --device <udid>`. mobilecli 1.0.17 is meant to install it automatically, but its status check fails before the install runs. Simulator apps must be a `.zip` of the `.app` bundle.
+- **iOS taps and React Native.** With mobilecli 1.0.17, taps on React Native controls in the iOS simulator report success but the app does not react. System dialogs and text entry work. On Android, React Native apps work fully. The iOS CI job skips the scenarios tagged `@taps` for this reason.
+
 ## Telemetry
 
 The mobilewright library sends no telemetry; only its own CLI does. The helper still sets `MOBILEWRIGHT_DISABLE_TELEMETRY=1` so the mobilecli server it starts inherits it.

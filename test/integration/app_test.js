@@ -19,7 +19,7 @@ Scenario('shows the catalog', ({ I }) => {
   I.seeAppIsInstalled('com.saucelabs.mydemoapp.rn')
 })
 
-Scenario('logs in by the labels next to the fields', ({ I }) => {
+Scenario('logs in by the labels next to the fields @taps', ({ I }) => {
   I.waitForText('Products', 30)
   I.amOnPage('mydemoapprn://login')
   I.waitForElement('~Username input field', 15)
@@ -37,7 +37,7 @@ Scenario('logs in by the labels next to the fields', ({ I }) => {
   I.waitForInvisible('~Login button', 15)
 })
 
-Scenario('opens a product', ({ I }) => {
+Scenario('opens a product @taps', ({ I }) => {
   I.waitForText('Products', 30)
   I.click('Sauce Labs Backpack')
   I.waitForElement('~Add To Cart button', 15)
